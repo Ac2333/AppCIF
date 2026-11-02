@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AppCIF-Bench</title>
+  <meta name="description" content="AppCIF-Bench: An Application-Level Complex Instruction Following Benchmark for Large Language Models. NeurIPS 2026.">
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <p class="venue">NeurIPS 2026</p>
+    <h1>AppCIF-Bench: An <span class="nowrap">Application-Level</span> Complex Instruction Following Benchmark for Large Language Models</h1>
+    <p class="authors">
+      <span>Jiahao Xu<sup>1,*</sup></span>
+      <span>Xuefang Zhao<sup>1,*</sup></span>
+      <span>Xinhua Feng<sup>1</sup></span>
+      <span>Hongrui Yang<sup>1</sup></span>
+      <span>Yixian Liu<sup>1</sup></span>
+      <span>Zhichao Hu<sup>1,&dagger;</sup></span>
+      <span>Yuhong Liu<sup>1</sup></span>
+    </p>
+    <p class="affiliations"><sup>1</sup>Tencent</p>
+    <p class="notes"><sup>*</sup>Equal contribution &nbsp; <sup>&dagger;</sup>Corresponding author</p>
+    <nav class="links" aria-label="Project links">
+      <!-- TODO: replace the two href="#" below with the real Paper / Data URLs. -->
+      <a class="button" id="link-paper" href="#">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M8.5 13h7M8.5 17h7"/></svg>
+        Paper
+      </a>
+      <a class="button" id="link-code" href="https://github.com/Ac2333/AppCIF-Benchmark">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg>
+        Code
+      </a>
+      <a class="button" id="link-data" href="#">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.300 8-3v-13M4 12c0 1.700 3.600 3 8 3s8-1.300 8-3"/></svg>
+        Data
+      </a>
+      <a class="button" href="#leaderboard">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v7a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 15v4M8 20h8"/></svg>
+        Leaderboard
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section id="abstract">
+  <div class="container narrow">
+    <h2>Abstract</h2>
+    <p class="justify">
+      Complex Instruction Following (CIF) underpins deployment of Large Language Models (LLMs) in production-grade applications. It demands stable, precise outputs across long horizons, deeply nested rules, and multi-turn interactions. Yet predominantly atomic, short-horizon benchmarks miss real-world logical depth and distractor pressure. We introduce <strong>AppCIF</strong>, the first application-level CIF benchmark. AppCIF stratifies difficulty along two conceptually distinct axes: <em>Horizon Length</em> (<var>H</var>), the span over which distractors accumulate and critical signals must be tracked; and <em>Logical Depth</em> (<var>L</var>), the depth of nested rules. Jointly scaling <var>H</var> and <var>L</var> yields four hierarchical complexity levels, from clean few-step execution (L1) to extreme pressure deduction (L4). AppCIF comprises 466 curated samples across five application scenarios. Its &ldquo;<strong>Prompt-as-Environment</strong>&rdquo; paradigm pairs Complex System Prompts (averaging ~14k words) with executable Code Simulation Engines (averaging ~3.5k lines of Python) to sustain rigorous state-machine deduction. AppCIF is constructed via a <strong>Labor-Divided Human-AI pipeline</strong> with scenario-specific collaboration strategies and evaluated on 12 representative LLMs. Results reveal sharp performance stratification: Hard Satisfaction Rate ranges from 1.1% to 45.9%, exposing bottlenecks in long-horizon, distractor-laden instruction execution.
+    </p>
+    <dl class="stats">
+      <div><dd>466</dd><dt>Samples</dt></div>
+      <div><dd>5</dd><dt>Scenarios</dt></div>
+      <div><dd>4</dd><dt>Complexity levels</dt></div>
+      <div><dd>~14k</dd><dt>Words per L4 system prompt</dt></div>
+      <div><dd>~3.5k</dd><dt>Lines per code engine</dt></div>
+      <div><dd>12</dd><dt>LLMs evaluated</dt></div>
+    </dl>
+  </div>
+</section>
+
+<section id="overview" class="alt">
+  <div class="container">
+    <h2>Two Axes, Four Levels, Five Scenarios</h2>
+    <p class="lead">Every sample is defined by <em>what</em> it tests (its application scenario) and <em>how hard</em> it is (its position on the <span class="nowrap">&lang;<var>H</var>, <var>L</var>&rang;</span> plane).</p>
+
+    <div class="split">
+      <figure>
+        <a href="static/figures/difficulty_landscape.webp" target="_blank" rel="noopener">
+          <img src="static/figures/difficulty_landscape.webp" width="1800" height="1492" alt="Donut charts for levels L1 to L4 placed along rising distractor intensity and logical depth, each showing its mix of application scenarios.">
+        </a>
+        <figcaption><strong>Figure 1.</strong> AppCIF difficulty &times; scenario landscape on the &lang;<var>H</var>, <var>L</var>&rang; plane.</figcaption>
+      </figure>
+      <ol class="levels">
+        <li style="--level: #e0924f">
+          <span class="tag">L1</span>
+          <div><h3>Precise Execution</h3><p>Short <var>H</var>, few-step <var>L</var>. Clean inputs and unambiguous rules set the execution floor.</p></div>
+          <span class="count">134</span>
+        </li>
+        <li style="--level: #cf6257">
+          <span class="tag">L2</span>
+          <div><h3>Multi-turn Goal Retention</h3><p>Long <var>H</var> with local distractors, multi-step <var>L</var>. Filter noisy turns while threading one reasoning chain.</p></div>
+          <span class="count">120</span>
+        </li>
+        <li style="--level: #5b8db8">
+          <span class="tag">L3</span>
+          <div><h3>Information Reorganization</h3><p>Long <var>H</var> with global distractors, multi-step <var>L</var>. Answer conditions are scattered and must be reassembled.</p></div>
+          <span class="count">122</span>
+        </li>
+        <li style="--level: #3d5a7e">
+          <span class="tag">L4</span>
+          <div><h3>Extreme Pressure Deduction</h3><p>Extreme <var>H</var>, deep multi-step <var>L</var>. IF-THEN-ELSE depth up to five levels and more than 100 inter-dependent rules.</p></div>
+          <span class="count">90</span>
+        </li>
+      </ol>
+    </div>
+
+    <h3 class="subhead">Application scenarios</h3>
+    <ul class="scenarios">
+      <li style="--dot: #82bd98"><h4>Curriculum Planning</h4><p class="capability">Dependency reasoning</p><p>Sequence courses under prerequisite chains, budget, and time limits.</p><span class="count">76 samples</span></li>
+      <li style="--dot: #e89c5a"><h4>Travel Planning</h4><p class="capability">Constraint planning</p><p>Find the itinerary that satisfies competing budget, time, and POI constraints.</p><span class="count">50 samples</span></li>
+      <li style="--dot: #79a8cf"><h4>Numeric-Intensive</h4><p class="capability">Logical reasoning</p><p>Execute formula-defined business rules where approximately right counts as wrong.</p><span class="count">46 samples</span></li>
+      <li style="--dot: #d689b0"><h4>Role-Playing</h4><p class="capability">Long-horizon state management</p><p>Maintain a persona through long, noisy, and partially adversarial dialogues.</p><span class="count">54 samples</span></li>
+      <li style="--dot: #a58cb8"><h4>Real-world Simulation</h4><p class="capability">Dynamic state maintenance</p><p>Perform state-machine deduction inside an expert-written rulebook. The only scenario reaching L4.</p><span class="count">240 samples</span></li>
+    </ul>
+  </div>
+</section>
+
+<section id="example">
+  <div class="container">
+    <h2>Prompt-as-Environment</h2>
+    <p class="lead">An ultra-complex system prompt serves as a rulebook that defines a self-contained environment through state variables, transition rules, and task constraints. A paired Python Code Simulation Engine executes each task instance to derive the ground truth, and the model's answer is graded against atomic, binary rubrics.</p>
+    <figure>
+      <a href="static/figures/data_sample.webp" target="_blank" rel="noopener">
+        <img src="static/figures/data_sample.webp" width="3200" height="1473" alt="A Power Grid task: the system prompt rulebook with equations and policies, a multi-turn dialogue with the user, and rubric questions with their calculation steps.">
+      </a>
+      <figcaption><strong>Figure 2.</strong> A Real-world Simulation (Power Grid) example: the Ultra-Complex System Prompt acts as a state-machine rulebook, verified by per-rubric evaluation. Open the image to view it at full size.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="leaderboard" class="alt">
+  <div class="container">
+    <h2 class="with-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 3h10v7a5 5 0 0 1-10 0z"/>
+        <path class="handles" d="M7 5H3.500v2a4 4 0 0 0 4 4M17 5h3.500v2a4 4 0 0 1-4 4"/>
+        <path d="M11 14h2v3h-2zM9 17h6a2 2 0 0 1 2 2v2H7v-2a2 2 0 0 1 2-2z"/>
+      </svg>
+      Leaderboard
+    </h2>
+    <p class="lead">Performance of 12 LLMs on AppCIF, sorted by HSR Avg. Select any column header to re-sort. <strong>Bold</strong> marks the best value in each column.</p>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="AppCIF leaderboard">
+      <table class="leaderboard" id="leaderboard-table">
+        <thead>
+          <tr>
+            <th rowspan="2" scope="col" class="model">Model</th>
+            <th colspan="5" scope="colgroup">Soft Satisfaction Rate (SSR, %)</th>
+            <th colspan="5" scope="colgroup" class="group-start">Hard Satisfaction Rate (HSR, %)</th>
+          </tr>
+          <tr id="leaderboard-columns"></tr>
+        </thead>
+        <tbody id="leaderboard-rows"></tbody>
+      </table>
+    </div>
+    <div class="table-notes">
+      <p><strong>SSR</strong> is the share of all rubrics satisfied. <strong>HSR</strong> is the share of samples with every rubric satisfied. <strong>Avg</strong> is the sample- or rubric-weighted global average. Numbers under each column are rubric counts (SSR) or sample counts (HSR).</p>
+      <p>Scores are judged by Doubao-Seed-1.6-1015. An independent second judge (Gemini-3-Flash-Preview) agrees on 95.8% of samples with the 12-model ranking unchanged, and the primary judge reaches 96% consensus agreement with human annotators on a stratified 60-instance subset. Claude-Opus-4.6 is excluded because repeated API runs failed on 34 of 466 cases.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <div class="container">
+    <h2>Labor-Divided Human-AI Data Construction</h2>
+    <p class="lead">Automation drives the <var>H</var> axis through context-scale extension and distractor injection, while human experts own the <var>L</var> axis. Each sample's ground-truth derivation is produced jointly with its rubric, keeping the reasoning trace and the grading criteria consistent.</p>
+    <figure>
+      <a href="static/figures/framework.webp" target="_blank" rel="noopener">
+        <img src="static/figures/framework.webp" width="2424" height="1527" alt="Two construction workflows: AI-First Refinement for the four open-domain scenarios and Human-First Expansion for Real-world Simulation.">
+      </a>
+      <figcaption><strong>Figure 3.</strong> AppCIF-Bench data construction: <strong>AI-First Refinement</strong> for the four open-domain scenarios and <strong>Human-First Expansion</strong> for the Prompt-as-Environment Real-world Simulation scenario. Open the image to view it at full size.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="citation" class="alt">
+  <div class="container narrow">
+    <h2>Citation</h2>
+    <div class="bibtex">
+      <button type="button" id="copy-bibtex">Copy</button>
+      <pre id="bibtex-text">@inproceedings{xu2026appcif,
+  title     = {AppCIF-Bench: An Application-Level Complex Instruction Following Benchmark for Large Language Models},
+  author    = {Xu, Jiahao and Zhao, Xuefang and Feng, Xinhua and Yang, Hongrui and Liu, Yixian and Hu, Zhichao and Liu, Yuhong},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">&copy; 2026 The AppCIF-Bench Authors, Tencent</div>
+</footer>
+
+<script src="static/main.js"></script>
+</body>
+</html>
